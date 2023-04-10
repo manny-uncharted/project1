@@ -24,14 +24,11 @@ def run_app():
     os.environ['OPENAI_API_KEY'] = openai_api_key
     os.environ['ELEVEN_LABS_API_KEY'] = eleven_labs_api_key
 
-    process = subprocess.Popen(['python', 'scripts/main.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()
+    process = subprocess.Popen(['python', 'scripts/main.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    stdout, stderr = process.communicate(input=b"default_name\n")
 
     # Open a new terminal window and run main.py
-    os.system('gnome-terminal -- python scripts/main.py')
+    subprocess.Popen(['xterm', '-e', 'python', 'scripts/main.py'])
 
     return jsonify({"result": "App is starting up.", "stdout": stdout.decode('utf-8'), "stderr": stderr.decode('utf-8')})
 
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
