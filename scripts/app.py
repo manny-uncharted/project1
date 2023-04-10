@@ -35,3 +35,5 @@ def run_app():
         subprocess.Popen(['gnome-terminal', '--', 'python', 'scripts/main.py'])
 
     return jsonify({"result": "App is starting up.", "stdout": stdout.decode('utf-8'), "stderr": stderr.decode('utf-8')})
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', debug=True)  
