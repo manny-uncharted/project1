@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 import subprocess
 import os
+import scripts.main
 
 app = Flask(__name__, template_folder=os.path.abspath('templates'))
 
@@ -23,7 +24,8 @@ def run_app():
     os.environ['OPENAI_API_KEY'] = openai_api_key
     os.environ['ELEVEN_LABS_API_KEY'] = eleven_labs_api_key
 
-    subprocess.Popen(['python', 'scripts/main.py', '--speak'])
+    subprocess.call(['python', 'scripts/main.py', '--speak'])
+    app.run(host='0.0.0.0', port=8080, debug=True)
 
     return jsonify({"result": "App is starting up."})
 
