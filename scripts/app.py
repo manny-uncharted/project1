@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import subprocess
 import os
-import scripts.main
 
 app = Flask(__name__, template_folder=os.path.abspath('templates'))
 
