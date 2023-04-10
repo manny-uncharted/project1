@@ -28,7 +28,10 @@ def run_app():
     stdout, stderr = process.communicate(input=b"default_name\n")
 
     # Open a new terminal window and run main.py
-    subprocess.Popen(['xterm', '-e', 'python', 'scripts/main.py'])
+    try:
+        subprocess.Popen(['xterm', '-e', 'python', 'scripts/main.py'])
+    except FileNotFoundError:
+        # Fallback to gnome-terminal
+        subprocess.Popen(['gnome-terminal', '--', 'python', 'scripts/main.py'])
 
     return jsonify({"result": "App is starting up.", "stdout": stdout.decode('utf-8'), "stderr": stderr.decode('utf-8')})
-
