@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import subprocess
 import os
 
@@ -6,10 +6,13 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    return 'Hello, World!'
+    return 'Welcome to the dark side!'
 
-@app.route('/run', methods=['POST'])
+@app.route('/run', methods=['GET', 'POST'])
 def run_app():
+    if request.method == 'GET':
+        return render_template('form.html')
+
     openai_api_key = request.form.get('openai_api_key')
     eleven_labs_api_key = request.form.get('eleven_labs_api_key')
 
