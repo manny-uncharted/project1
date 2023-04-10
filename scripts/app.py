@@ -24,10 +24,11 @@ def run_app():
     os.environ['OPENAI_API_KEY'] = openai_api_key
     os.environ['ELEVEN_LABS_API_KEY'] = eleven_labs_api_key
 
-    subprocess.call(['python', 'scripts/main.py', '--speak'])
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    process = subprocess.Popen(['python', 'scripts/main.py', '--speak'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate()
 
-    return jsonify({"result": "App is starting up."})
+    return jsonify({"result": "App is starting up.", "stdout": stdout.decode('utf-8'), "stderr": stderr.decode('utf-8')})
+
 
 
 if __name__ == '__main__':
