@@ -7,7 +7,8 @@ app = Flask(__name__, template_folder=os.path.abspath('templates'))
 
 @app.route('/')
 def hello_world():
-    return 'Welcome to the dark side!'
+    return 'Welcome to the Afterflea!'
+
 
 @app.route('/run', methods=['GET', 'POST'])
 def run_app():
@@ -26,8 +27,10 @@ def run_app():
     process = subprocess.Popen(['python', 'scripts/main.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
 
-    return jsonify({"result": "App is starting up.", "stdout": stdout.decode('utf-8'), "stderr": stderr.decode('utf-8')})
+    # Open a new terminal window and run main.py
+    os.system('gnome-terminal -- python scripts/main.py')
 
+    return jsonify({"result": "App is starting up.", "stdout": stdout.decode('utf-8'), "stderr": stderr.decode('utf-8')})
 
 
 if __name__ == '__main__':
