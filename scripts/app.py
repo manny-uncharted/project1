@@ -4,6 +4,10 @@ import os
 
 app = Flask(__name__)
 
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
+
 @app.route('/run', methods=['POST'])
 def run_app():
     openai_api_key = request.form.get('openai_api_key')
