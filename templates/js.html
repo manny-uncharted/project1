@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Main</title>
+</head>
+<body>
+  <pre id="output"></pre>
+  <script>
+    function updateOutput() {
+      fetch('/output')
+        .then(response => response.text())
+        .then(text => document.getElementById('output').innerText = text)
+        .then(() => setTimeout(updateOutput, 1000));
+    }
+    updateOutput();
+  </script>
+</body>
+</html>
