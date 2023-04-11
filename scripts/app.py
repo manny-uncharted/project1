@@ -30,10 +30,11 @@ def run_app():
     print(os.getcwd())  # print current working directory
 
     scripts_dir = os.path.join(os.getcwd(), 'scripts')
-    print(os.listdir(scripts_dir))  # print contents of scripts directory
+    print(os.listdir(scripts_dir))
+    print(os.getcwd()) 
 
     try:
-        subprocess.Popen(['python', '/home/ec2-user/project1/scripts/main.py'], env=env)
+        subprocess.Popen(['python', os.path.join(scripts_dir, 'main.py')], env=env)
         print('Subprocess started.')
     except FileNotFoundError:
         return jsonify({"error": "File not found."}), 500
