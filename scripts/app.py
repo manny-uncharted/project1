@@ -3,6 +3,7 @@ from multiprocessing import Process
 import subprocess
 import os
 import time
+import webbrowser
 from flask_socketio import SocketIO, emit
 
 app = Flask(__name__, template_folder=os.path.abspath('templates'))
@@ -12,11 +13,6 @@ socketio = SocketIO(app)
 @app.route('/')
 def hello_world():
     return 'Welcome to the Afterflea!'
-
-@app.route('/run', methods=['GET', 'POST'])
-import webbrowser
-
-...
 
 @app.route('/run', methods=['GET', 'POST'])
 def run_app():
