@@ -32,7 +32,10 @@ def run_app():
 @app.route('/open_terminal', methods=['GET', 'POST'])
 def open_terminal():
     # Get user input from the form data
-    user_input = request.form['user_input']
+    user_input = request.form.get('user_input')
+    if user_input is None:
+        return jsonify({"error": "user_input is required."}), 400
+
 
     # Build the command to run in the terminal
     command = 'echo {}'.format(user_input)
