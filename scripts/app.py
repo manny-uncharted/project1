@@ -23,12 +23,9 @@ def run_app():
     env = {'OPENAI_API_KEY': openai_api_key, 'ELEVEN_LABS_API_KEY': eleven_labs_api_key}
 
     try:
-        subprocess.Popen(['python', 'scripts/main.py'], env=env)
+        subprocess.Popen(['screen', '-S', 'my_screen', '-dm', 'python', 'scripts/main.py'], env=env)
     except FileNotFoundError:
-        # Fallback to gnome-terminal
-        subprocess.Popen(['x-terminal-emulator', '-e', 'python', 'scripts/main.py'])
-
-
+        return jsonify({"error": "File not found."}), 500
 
     return jsonify({"result": "App is starting up."})
 
