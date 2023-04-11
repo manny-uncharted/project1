@@ -29,7 +29,7 @@ def run_app():
     
     return jsonify({"result": "App is starting up."})
 
-@app.route('/open_terminal', methods=['POST'])
+@app.route('/open_terminal', methods=['GET', 'POST'])
 def open_terminal():
     # Get user input from the form data
     user_input = request.form['user_input']
