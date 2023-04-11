@@ -26,24 +26,26 @@ def run_app():
         return jsonify({"error": "API keys are required."}), 400
 
     env = {'OPENAI_API_KEY': openai_api_key, 'ELEVEN_LABS_API_KEY': eleven_labs_api_key}
-
-    try:
-        subprocess.Popen(['python', 'scripts/main.py'], env=env)
-        print('Subprocess started.')
-    except FileNotFoundError:
-        return jsonify({"error": "File not found."}), 500
-
-    webbrowser.open_new_tab('http://localhost:5000/main')
-
+    
     return jsonify({"result": "App is starting up."})
 
+@app.route('/open_terminal', methods=['POST'])
+def open_terminal():
+    # Get user input from the form data
+    user_input = request.form['user_input']
 
-@app.route('/main')
-def main():
-    return render_template('js.html')
+    # Build the command to run in the terminal
+    command = 'echo {}'.format(user_input)
+
+    # Open a new terminal window and run the command
+    subprocess.Popen(['gnome-terminal', '-e', command])
+
+    # Return a response to the user
+    return 'Command executed in terminal: {}'.format(command)
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', debug=True, allow_unsafe_werkzeug=True)
+
 
 
 
