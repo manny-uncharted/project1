@@ -1,14 +1,11 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 import subprocess
-import os
 
 app = Flask(__name__, template_folder=os.path.abspath('templates'))
-
 
 @app.route('/')
 def hello_world():
     return 'Welcome to the Afterflea!'
-
 
 @app.route('/run', methods=['GET', 'POST'])
 def run_app():
@@ -21,19 +18,15 @@ def run_app():
     if not openai_api_key or not eleven_labs_api_key:
         return jsonify({"error": "API keys are required."}), 400
 
-    os.environ['OPENAI_API_KEY'] = openai_api_key
-    os.environ['ELEVEN_LABS_API_KEY'] = eleven_labs_api_key
+    env = {'OPENAI_API_KEY': openai_api_key, 'ELEVEN_LABS_API_KEY': eleven_labs_api_key}
 
-    process = subprocess.Popen(['python', 'scripts/main.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-    stdout, stderr = process.communicate(input=b"default_name\n")
-
-    # Open a new terminal window and run main.py
     try:
-        subprocess.Popen(['xterm', '-e', 'python', 'scripts/main.py'])
+        subprocess.Popen(['python', 'scripts/main.py'], env=env)
     except FileNotFoundError:
         # Fallback to gnome-terminal
         subprocess.Popen(['gnome-terminal', '--', 'python', 'scripts/main.py'])
 
-    return jsonify({"result": "App is starting up.", "stdout": stdout.decode('utf-8'), "stderr": stderr.decode('utf-8')})
+    return jsonify({"result": "App is starting up."})
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)  
+    app.run(host='0.0.0.0', debug=True)
