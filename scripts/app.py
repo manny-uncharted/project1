@@ -5,6 +5,15 @@ import os
 
 app = Flask(__name__, template_folder=os.path.abspath('templates'))
 
+def start_background_process(openai_api_key, eleven_labs_api_key):
+    env = {'OPENAI_API_KEY': openai_api_key, 'ELEVEN_LABS_API_KEY': eleven_labs_api_key}
+
+    try:
+        process = subprocess.Popen(['screen', '-S', 'my_screen', '-dm', 'python', './scripts/main.py'], env=env)
+        print(f'Subprocess started with PID {process.pid}')
+    except FileNotFoundError:
+        print('File not found')
+
 @app.route('/')
 def hello_world():
     return 'Welcome to the Afterflea!'
@@ -20,13 +29,8 @@ def run_app():
     if not openai_api_key or not eleven_labs_api_key:
         return jsonify({"error": "API keys are required."}), 400
 
-    env = {'OPENAI_API_KEY': openai_api_key, 'ELEVEN_LABS_API_KEY': eleven_labs_api_key}
-
-    try:
-        process = subprocess.Popen(['screen', '-S', 'my_screen', '-dm', 'python', './scripts/main.py'], env=env)
-        print(f'Subprocess started with PID {process.pid}')
-    except FileNotFoundError:
-        return jsonify({"error": "File not found."}), 500
+    p = Process(target=start_background_process, args=(openai_api_key, eleven_labs_api_key))
+    p.start()
 
     return jsonify({"result": "App is starting up."})
 
