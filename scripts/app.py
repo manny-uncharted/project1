@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template
-
+from multiprocessing import Process
 import subprocess
 import os
 
@@ -22,10 +22,8 @@ def run_app():
 
     env = {'OPENAI_API_KEY': openai_api_key, 'ELEVEN_LABS_API_KEY': eleven_labs_api_key}
 
-    try:
-        subprocess.Popen(['screen', '-S', 'my_screen', '-dm', 'python', 'scripts/main.py'], env=env)
-    except FileNotFoundError:
-        return jsonify({"error": "File not found."}), 500
+    p = Process(target=subprocess.Popen, args=(['python', 'scripts/main.py'],), kwargs={'env': env})
+    p.start()
 
     return jsonify({"result": "App is starting up."})
 
