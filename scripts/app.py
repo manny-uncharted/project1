@@ -22,8 +22,11 @@ def run_app():
 
     env = {'OPENAI_API_KEY': openai_api_key, 'ELEVEN_LABS_API_KEY': eleven_labs_api_key}
 
-    p = Process(target=subprocess.Popen, args=(['python', 'scripts/main.py'],), kwargs={'env': env})
-    p.start()
+    try:
+        process = subprocess.Popen(['python', 'scripts/main.py'], env=env)
+        print(f'Subprocess started with PID {process.pid}')
+    except FileNotFoundError:
+        return jsonify({"error": "File not found."}), 500
 
     return jsonify({"result": "App is starting up."})
 
