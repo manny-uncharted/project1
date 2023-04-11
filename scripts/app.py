@@ -27,14 +27,8 @@ def run_app():
 
     env = {'OPENAI_API_KEY': openai_api_key, 'ELEVEN_LABS_API_KEY': eleven_labs_api_key}
 
-    print(os.getcwd())  # print current working directory
-
-    scripts_dir = os.path.join(os.getcwd(), 'scripts')
-    print(os.listdir(scripts_dir))
-    print(os.getcwd()) 
-
     try:
-        subprocess.Popen(['python', os.path.join(scripts_dir, 'main.py')], env=env)
+        subprocess.Popen([('python', 'scripts/main.py')], env=env)
         print('Subprocess started.')
     except FileNotFoundError:
         return jsonify({"error": "File not found."}), 500
