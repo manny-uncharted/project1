@@ -26,7 +26,8 @@ def run_app():
         subprocess.Popen(['python', 'scripts/main.py'], env=env)
     except FileNotFoundError:
         # Fallback to gnome-terminal
-        subprocess.Popen(['gnome-terminal', '--', 'python', 'scripts/main.py'])
+        subprocess.Popen(['open', '-a', 'Terminal', 'python', 'scripts/main.py'])
+
 
     return jsonify({"result": "App is starting up."})
 
