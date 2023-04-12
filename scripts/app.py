@@ -7,11 +7,14 @@ from ai_config import AIConfig
 from main import main_file
 import openai
 from flask_socketio import SocketIO, emit
-from terminal import launch_terminal
+import subprocess
 
 app = Flask(__name__, template_folder=os.path.abspath('templates'))
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
+
+def launch_terminal(command):
+    subprocess.call(['gnome-terminal', '--', 'bash', '-c', command])
 
 @app.route('/')
 def hello_world():
@@ -52,6 +55,7 @@ def run_app():
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', debug=True, allow_unsafe_werkzeug=True)
+
 
 
 
