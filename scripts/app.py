@@ -8,6 +8,7 @@ from ai_config import AIConfig
 from main import main_file
 import openai
 from flask_socketio import SocketIO, emit
+from terminal import launch_terminal
 
 app = Flask(__name__, template_folder=os.path.abspath('templates'))
 app.config['SECRET_KEY'] = 'secret!'
@@ -44,7 +45,11 @@ def run_app():
     ai_goals = [goal1, goal2, goal3, goal4, goal5]
 
     result = main_file(ai_name, ai_role, ai_goals)
-    
+    # Launch terminal and run command
+    command = f"python3 scripts/main.py {ai_name} {ai_role}"
+
+    launch_terminal(command)
+
     return result
     
     # return jsonify({"result": "App is starting up."})
