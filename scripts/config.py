@@ -35,6 +35,8 @@ class Config(metaclass=Singleton):
         
         self.openai_api_key = os.getenv("OPENAI_API_KEY")
         self.elevenlabs_api_key = os.getenv("ELEVENLABS_API_KEY")
+        # self.openai_api_key = "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"
+        # self.elevenlabs_api_key = "4450b559fff930a6af4e50efbc00bd4c"
         
         self.google_api_key = os.getenv("GOOGLE_API_KEY")
         self.custom_search_engine_id = os.getenv("CUSTOM_SEARCH_ENGINE_ID")

@@ -159,35 +159,35 @@ def load_variables(config_file="config.yaml"):
     return full_prompt
 
 
-def construct_prompt():
-    config = AIConfig.load()
-    if config.ai_name:
-        print_to_console(
-            f"Welcome back! ",
-            Fore.GREEN,
-            f"Would you like me to return to being {config.ai_name}?",
-            speak_text=True)
-        should_continue = input(f"""Continue with the last settings? 
-Name:  {config.ai_name}
-Role:  {config.ai_role}
-Goals: {config.ai_goals}  
-Continue (y/n): """)
-        if should_continue.lower() == "n":
-            config = AIConfig()
+def construct_prompt(ai_name,ai_role,ai_goals):
+#     config = AIConfig.load()
+#     if config.ai_name:
+#         print_to_console(
+#             f"Welcome back! ",
+#             Fore.GREEN,
+#             f"Would you like me to return to being {config.ai_name}?",
+#             speak_text=True)
+#         should_continue = input(f"""Continue with the last settings? 
+# Name:  {config.ai_name}
+# Role:  {config.ai_role}
+# Goals: {config.ai_goals}  
+# Continue (y/n): """)
+#         if should_continue.lower() == "n":
+    config = AIConfig()
 
-    if not config.ai_name:         
-        config = prompt_user()
-        config.save()
+    # if not config.ai_name:         
+    # config = prompt_user(ai_name,ai_role,ai_goals)
+    config.save()
 
     # Get rid of this global:
-    global ai_name
+    # global ai_name
     ai_name = config.ai_name
     
     full_prompt = config.construct_full_prompt()
     return full_prompt
 
 
-def prompt_user():
+def prompt_user(ai_name,ai_role,ai_goals):
     ai_name = ""
     # Construct the prompt
     print_to_console(
@@ -240,7 +240,7 @@ def prompt_user():
     return config
 
 def parse_arguments():
-    global cfg
+    # global cfg
     cfg.set_continuous_mode(False)
     cfg.set_speak_mode(False)
     
@@ -270,94 +270,99 @@ def parse_arguments():
 
 # TODO: fill in llm values here
 
-cfg = Config()
-parse_arguments()
-ai_name = ""
-prompt = construct_prompt()
-# print(prompt)
-# Initialize variables
-full_message_history = []
-result = None
-# Make a constant:
-user_input = "Determine which next command to use, and respond using the format specified above:"
+def main_file(ai_name,ai_role,ai_goals):
+    global cfg
+    cfg = Config()
+    parse_arguments()
+    ai_name = ""
+    prompt = construct_prompt(ai_name,ai_role,ai_goals)
+    # print(prompt)
+    # Initialize variables
+    full_message_history = []
+    result = None
+    # Make a constant:
+    user_input = "Determine which next command to use, and respond using the format specified above:"
 
-# Interaction Loop
-while True:
-    # Send message to AI, get response
-    with Spinner("Thinking... "):
-        assistant_reply = chat.chat_with_ai(
-            prompt,
-            user_input,
-            full_message_history,
-            mem.permanent_memory,
-            cfg.fast_token_limit) # TODO: This hardcodes the model to use GPT3.5. Make this an argument
+    # Interaction Loop
+    while True:
+        # Send message to AI, get response
+        with Spinner("Thinking... "):
+            assistant_reply = chat.chat_with_ai(
+                prompt,
+                user_input,
+                full_message_history,
+                mem.permanent_memory,
+                cfg.fast_token_limit) # TODO: This hardcodes the model to use GPT3.5. Make this an argument
 
-    # print("assistant reply: "+assistant_reply)
-    # Print Assistant thoughts
-    print_assistant_thoughts(assistant_reply)
+        # print("assistant reply: "+assistant_reply)
+        # Print Assistant thoughts
+        print_assistant_thoughts(assistant_reply)
 
-    # Get command name and arguments
-    try:
-        command_name, arguments = cmd.get_command(assistant_reply)
-    except Exception as e:
-        print_to_console("Error: \n", Fore.RED, str(e))
+        # Get command name and arguments
+        try:
+            command_name, arguments = cmd.get_command(assistant_reply)
+        except Exception as e:
+            print_to_console("Error: \n", Fore.RED, str(e))
 
-    if not cfg.continuous_mode:
-        ### GET USER AUTHORIZATION TO EXECUTE COMMAND ###
-        # Get key press: Prompt the user to press enter to continue or escape
-        # to exit
-        user_input = ""
-        print_to_console(
-            "NEXT ACTION: ",
-            Fore.CYAN,
-            f"COMMAND = {Fore.CYAN}{command_name}{Style.RESET_ALL}  ARGUMENTS = {Fore.CYAN}{arguments}{Style.RESET_ALL}")
-        print(
-            f"Enter 'y' to authorise command or 'n' to exit program, or enter feedback for {ai_name}...",
-            flush=True)
-        while True:
-            console_input = input(Fore.MAGENTA + "Input:" + Style.RESET_ALL)
-            if console_input.lower() == "y":
-                user_input = "GENERATE NEXT COMMAND JSON"
-                break
-            elif console_input.lower() == "n":
-                user_input = "EXIT"
-                break
-            else:
-                user_input = console_input
-                command_name = "human_feedback"
-                break
-
-        if user_input == "GENERATE NEXT COMMAND JSON":
+        if not cfg.continuous_mode:
+            ### GET USER AUTHORIZATION TO EXECUTE COMMAND ###
+            # Get key press: Prompt the user to press enter to continue or escape
+            # to exit
+            user_input = ""
             print_to_console(
-            "-=-=-=-=-=-=-= COMMAND AUTHORISED BY USER -=-=-=-=-=-=-=",
-            Fore.MAGENTA,
-            "")
-        elif user_input == "EXIT":
-            print("Exiting...", flush=True)
-            break
-    else:
-        # Print command
-        print_to_console(
-            "NEXT ACTION: ",
-            Fore.CYAN,
-            f"COMMAND = {Fore.CYAN}{command_name}{Style.RESET_ALL}  ARGUMENTS = {Fore.CYAN}{arguments}{Style.RESET_ALL}")
+                "NEXT ACTION: ",
+                Fore.CYAN,
+                f"COMMAND = {Fore.CYAN}{command_name}{Style.RESET_ALL}  ARGUMENTS = {Fore.CYAN}{arguments}{Style.RESET_ALL}")
+            print(
+                f"Enter 'y' to authorise command or 'n' to exit program, or enter feedback for {ai_name}...",
+                flush=True)
+            while True:
+                console_input = input(Fore.MAGENTA + "Input:" + Style.RESET_ALL)
+                if console_input.lower() == "y":
+                    user_input = "GENERATE NEXT COMMAND JSON"
+                    break
+                elif console_input.lower() == "n":
+                    user_input = "EXIT"
+                    break
+                else:
+                    user_input = console_input
+                    command_name = "human_feedback"
+                    break
 
-    # Execute command
-    if command_name.lower() == "error":
-        result = f"Command {command_name} threw the following error: " + arguments
-    elif command_name == "human_feedback":
-        result = f"Human feedback: {user_input}"
-    else:
-        result = f"Command {command_name} returned: {cmd.execute_command(command_name, arguments)}"
+            if user_input == "GENERATE NEXT COMMAND JSON":
+                print_to_console(
+                "-=-=-=-=-=-=-= COMMAND AUTHORISED BY USER -=-=-=-=-=-=-=",
+                Fore.MAGENTA,
+                "")
+            elif user_input == "EXIT":
+                print("Exiting...", flush=True)
+                break
+        else:
+            # Print command
+            print_to_console(
+                "NEXT ACTION: ",
+                Fore.CYAN,
+                f"COMMAND = {Fore.CYAN}{command_name}{Style.RESET_ALL}  ARGUMENTS = {Fore.CYAN}{arguments}{Style.RESET_ALL}")
 
-    # Check if there's a result from the command append it to the message
-    # history
-    if result is not None:
-        full_message_history.append(chat.create_chat_message("system", result))
-        print_to_console("SYSTEM: ", Fore.YELLOW, result)
-    else:
-        full_message_history.append(
-            chat.create_chat_message(
-                "system", "Unable to execute command"))
-        print_to_console("SYSTEM: ", Fore.YELLOW, "Unable to execute command")
+        # Execute command
+        if command_name.lower() == "error":
+            result = f"Command {command_name} threw the following error: " + arguments
+        elif command_name == "human_feedback":
+            result = f"Human feedback: {user_input}"
+        else:
+            result = f"Command {command_name} returned: {cmd.execute_command(command_name, arguments)}"
+
+        # Check if there's a result from the command append it to the message
+        # history
+        if result is not None:
+            full_message_history.append(chat.create_chat_message("system", result))
+            print_to_console("SYSTEM: ", Fore.YELLOW, result)
+            return result
+        else:
+            full_message_history.append(
+                chat.create_chat_message(
+                    "system", "Unable to execute command"))
+            print_to_console("SYSTEM: ", Fore.YELLOW, "Unable to execute command")
+            return "Unable to execute command"
+
 
